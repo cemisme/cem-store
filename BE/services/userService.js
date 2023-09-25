@@ -35,23 +35,31 @@ const createUser = (newUser) => {
 const loginUser = (user) => {
   return new Promise(async (resolve, reject) => {
     const { email, password } = user;
+    console.log("✌️password --->", password);
     try {
       const checkUser = await User.findOne({
         email: email,
       });
-      const comparePass = bcrypt.compareSync(password, checkUser?.password); // so sánh pass mã hóa với pass chưa mã hóa
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+      const plainPassword = bcrypt.compareSync(
+        checkUser.password,
+        hashedPassword
+      );
+      console.log("✌️plainPassword --->", plainPassword);
+      if (!plainPassword) {
+        resolve({
+          status: "ERR",
+          message: "User or Pass incorrect",
+        });
+      }
       if (checkUser === null) {
         resolve({
           status: "ERR",
           message: "Acount is not defined",
         });
       }
-      if (!comparePass) {
-        resolve({
-          status: "ERR",
-          message: "Password or User incorrect",
-        });
-      }
+
       const access_token = await genneralAccessToken({
         id: checkUser.id,
         isAdmin: checkUser.isAdmin,
@@ -77,23 +85,15 @@ const updateUser = (id, name) => {
       const checkUser = await User.findOne({
         _id: id,
       });
-      console.log("checkUser", checkUser)
-    //   if (checkUser === null) {
-    //     resolve({
-    //       status: "ERR",
-    //       message: "Acount is not defined",
-    //     });
-    //   }
-      const updateUser = await User.findByIdAndUpdate(id, name,{new:true});
+      console.log("checkUser", checkUser);
+      //   if (checkUser === null) {
+      //     resolve({
+      //       status: "ERR",
+      //       message: "Acount is not defined",
+      //     });
+      //   }
+      const updateUser = await User.findByIdAndUpdate(id, name, { new: true });
       console.log(updateUser);
-      // const access_token = await genneralAccessToken({
-      //   id: checkUser.id,
-      //   isAdmin: checkUser.isAdmin,
-      // });
-      // const refresh_token = await genneralRefreshToken({
-      //   id: checkUser.id,
-      //   isAdmin: checkUser.isAdmin,
-      // });
       resolve({
         status: "OK",
         message: "SUCCESS",
@@ -103,12 +103,24 @@ const updateUser = (id, name) => {
     }
   });
 };
-const deleteUser=(id)=>{
-return new Promise(async(re))
-}
+const deleteUser = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const deleteUser = await User.findOneAndDelete(id);
+      console.log(deleteUser);
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   createUser,
   loginUser,
   updateUser,
+  deleteUser,
 };
