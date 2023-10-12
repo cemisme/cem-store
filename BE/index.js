@@ -3,15 +3,7 @@ const dotenv = require("dotenv");
 const { default: mongoose } = require("mongoose");
 const routes = require("./routes");
 const bodyParser = require("body-parser");
-<<<<<<< HEAD
-<<<<<<< HEAD
 const cors = require("cors");
-=======
-const cors = require('cors');
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
-=======
-const cors = require('cors');
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
 dotenv.config();
 
 const app = express();

@@ -38,36 +38,24 @@ const loginUser = (user) => {
       const checkUser = await User.findOne({
         email: email,
       });
-<<<<<<< HEAD
-<<<<<<< HEAD
-      if(checkUser===null)
-      {
-=======
+
       if (checkUser === null) {
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
-=======
-      if (checkUser === null) {
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
         resolve({
           status: "ERR",
           message: "User or Pass incorrect",
         });
       }
-<<<<<<< HEAD
-<<<<<<< HEAD
+
       console.log("✌️checkUser --->", checkUser);
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
-      const plainPassword = bcrypt.compareSync(
-        checkUser.password,
-        hashedPassword
-      );
-=======
+      // const plainPassword = bcrypt.compareSync(
+      //   checkUser.password,
+      //   hashedPassword
+      // );
+
       const plainPassword = await bcrypt.compare(password, checkUser.password);
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
-=======
-      const plainPassword = await bcrypt.compare(password, checkUser.password);
->>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
+
       console.log("✌️plainPassword --->", plainPassword);
       if (!plainPassword) {
         resolve({
