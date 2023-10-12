@@ -5,11 +5,13 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import "./global/globalStyles.scss";
 import "./index.css";
+import { ToastContainer } from "react-toastify";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
+      <ToastContainer />
     </BrowserRouter>
   </React.StrictMode>
 );

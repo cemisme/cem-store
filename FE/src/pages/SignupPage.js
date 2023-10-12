@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
 import { Input } from "../component/input";
 import { Label } from "../component/label";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 import * as yup from "yup";
+import { Link } from "react-router-dom";
 
 const schema = yup
   .object()
@@ -24,8 +28,12 @@ const schema = yup
       .test(
         "agree",
         "Must be agree with our policy",
-        (value) => value === true
-      ),
+        (value) => {
+          if(value)
+          {return value===true}
+         
+        }
+      )
     // .when("pass", (value) => {
     //   return value
     //     ? yup.string().min(8, "Please enter pass more than 8 characters")
@@ -35,18 +43,52 @@ const schema = yup
   .required();
 
 const SignupPage = () => {
+  const [dataSend, setDataSend] = useState("");
   const {
     handleSubmit,
+    isSubmitting,
     formState: { errors },
     control,
   } = useForm({ resolver: yupResolver(schema) });
-  const onSubmit = (data) => console.log(data);
+  useEffect(() => {
+    if (!dataSend.name || !dataSend.email || !dataSend.pass) {
+      // Hiển thị lỗi
+      return;
+    }
+    if (dataSend) {
+      const { name, email, pass } = dataSend;
+
+      axios
+        .post(
+          "http://localhost:8080/api/user/signup",
+          { name: name, email: email, password: pass },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          console.log("✌️response --->", response.data.message);
+          toast.error(response.data.message,)
+
+        })
+        .catch((error) => {
+          console.log("✌️error --->", error);
+        });
+    }
+  }, [isSubmitting]);
+  
+  const onSubmit = (data) => {
+    setDataSend(data);
+  };
   console.log(errors);
   return (
     <LayoutAuthentication heading="SignUp">
-      <div className="text-center lg:text-[14px] font-medium text-[12px] leading-[18px] lg:leading-[22px]">
+    <div className="mr-[20px]">
+    <div className="text-center lg:text-[14px] font-medium text-[12px] leading-[18px] lg:leading-[22px]">
         <span className="text-text3">Already have an account? </span>
-        <u className="text-primary cursor-pointer">Sign in</u>
+        <u className="text-primary cursor-pointer"><Link to="/signin">Sign in</Link></u>
       </div>
       <div className="cursor-pointer flex justify-center w-[287px] items-center mx-auto h-[52px] lg:w-[430px] rounded-[10px] border border-strock lg:mt-[30px] mt-[25px]">
         <svg
@@ -79,6 +121,7 @@ const SignupPage = () => {
       <h2 className="cursor-pointer mt-[20px] text-center font-[400] text-[12px] leading-[18px] lg:text-[14px] lg:leading-[22px]">
         Or sign up with email
       </h2>
+    </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="lg:px-[40px] mt-[5px] lg:mt-[30px]"
@@ -94,7 +137,9 @@ const SignupPage = () => {
                 ? "placeholder-error cursor-pointer placeholder text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"Join Henry"}
+            placeholder={
+              errors?.name?.message ? errors?.pass?.message : "Join Henry"
+            }
           ></Input>
         </div>
         <div className="flex flex-col ">
@@ -104,11 +149,15 @@ const SignupPage = () => {
             id="email"
             type="email"
             className={
-              errors.name
+              errors.email
                 ? "placeholder-error cursor-pointer text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"example@gmail.com"}
+            placeholder={
+              errors?.pass?.message
+                ? errors?.email?.message
+                : "example@gmail.com"
+            }
           ></Input>
         </div>
         <div className="flex flex-col ">
@@ -118,11 +167,15 @@ const SignupPage = () => {
             id="pass"
             type="password"
             className={
-              errors.name
+              errors.pass
                 ? "placeholder-error cursor-pointer text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"Create a password"}
+            placeholder={
+              errors?.pass?.message
+                ? errors?.pass?.message
+                : "Create a password"
+            }
           ></Input>
         </div>
         <div className="flex  mt-[25px]">
@@ -142,9 +195,12 @@ const SignupPage = () => {
             </span>
             .
           </span>
-          
         </div>
-        {errors?.agree?.message&&<div className="text-error text-[14px] mt-[5px]">{errors?.agree?.message}</div>}
+        {errors?.agree?.message && (
+          <div className="text-error text-[14px] mt-[5px]">
+            {errors?.agree?.message}
+          </div>
+        )}
         <button
           type="submit"
           className="bg-primary w-[287px] h-[52px] lg:w-[436px] lg:h-[52px] text-white rounded-[10px] leading-[26px] text-[16px] text-[600] mt-[25px]"

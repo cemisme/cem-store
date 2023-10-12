@@ -5,6 +5,13 @@ const { genneralAccessToken, genneralRefreshToken } = require("./jwtService");
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
     const { name, email, password } = newUser;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      resolve({
+        status: "ERROR",
+        message: "Email already exists",
+      });
+    }
     try {
       const hash = bcrypt.hashSync(password, 10);
       const createdUser = await User.create({
@@ -12,20 +19,12 @@ const createUser = (newUser) => {
         email,
         password: hash,
       });
-      //   const checkEmail = await User.findOne({
-      //     email: email,
-      //   });
-      //   if (checkEmail !== null) {
-      //     resolve({
-      //       status: "OK",
-      //       message: "The Email is already",
-      //     });
-      //   }
       if (createdUser) {
         resolve({
           status: "OK",
-          message: "SUCCESS",
+          message: "Create User Success",
         });
+        console.log(newUser);
       }
     } catch (e) {
       reject(e);
@@ -40,12 +39,13 @@ const loginUser = (user) => {
       const checkUser = await User.findOne({
         email: email,
       });
-      const salt = bcrypt.genSaltSync(10);
-      const hashedPassword = bcrypt.hashSync(password, salt);
-      const plainPassword = bcrypt.compareSync(
-        checkUser.password,
-        hashedPassword
-      );
+      if (checkUser === null) {
+        resolve({
+          status: "ERR",
+          message: "User or Pass incorrect",
+        });
+      }
+      const plainPassword = await bcrypt.compare(password, checkUser.password);
       console.log("✌️plainPassword --->", plainPassword);
       if (!plainPassword) {
         resolve({
@@ -53,10 +53,11 @@ const loginUser = (user) => {
           message: "User or Pass incorrect",
         });
       }
-      if (checkUser === null) {
+      console.log("✌️plainPassword --->", plainPassword);
+      if (!plainPassword) {
         resolve({
           status: "ERR",
-          message: "Acount is not defined",
+          message: "User or Pass incorrect",
         });
       }
 
@@ -70,7 +71,7 @@ const loginUser = (user) => {
       });
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Login Success",
         access_token: access_token,
         refresh_token: refresh_token,
       });
