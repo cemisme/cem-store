@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
 import { Input } from "../component/input";
 import { Label } from "../component/label";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import axios from "axios";
 
 const schema = yup
   .object()
@@ -35,12 +36,29 @@ const schema = yup
   .required();
 
 const SignupPage = () => {
+  const [dataLogin, setDataLogin] = useState("");
+  console.log("✌️dataLogin --->", dataLogin);
+  useEffect(() => {
+    axios
+      .post("http://localhost:8080/api/user/signup", dataLogin)
+      .then((response) => {
+        console.log("✌️succes");
+      })
+      .catch((error) => {
+        console.log("✌️error --->", error);
+      });
+  }, [dataLogin]);
   const {
     handleSubmit,
     formState: { errors },
     control,
   } = useForm({ resolver: yupResolver(schema) });
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    console.log("✌️data --->", data);
+    const { name, email, pass } = data;
+    const dataSend = { name, email, password: pass };
+    setDataLogin(dataSend);
+  };
   console.log(errors);
   return (
     <LayoutAuthentication heading="SignUp">
@@ -94,7 +112,9 @@ const SignupPage = () => {
                 ? "placeholder-error cursor-pointer placeholder text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"Join Henry"}
+            placeholder={
+              errors?.pass?.message ? errors?.pass?.message : "Join Henry"
+            }
           ></Input>
         </div>
         <div className="flex flex-col ">
@@ -108,7 +128,11 @@ const SignupPage = () => {
                 ? "placeholder-error cursor-pointer text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"example@gmail.com"}
+            placeholder={
+              errors?.pass?.message
+                ? errors?.pass?.message
+                : "example@gmail.com"
+            }
           ></Input>
         </div>
         <div className="flex flex-col ">
@@ -122,7 +146,11 @@ const SignupPage = () => {
                 ? "placeholder-error cursor-pointer text-error inline-block outline-none border lg:w-[436px] lg:h-[52px] border-error rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
                 : "cursor-pointer inline-block outline-none border lg:w-[436px] lg:h-[52px] border-strock rounded-[10px] w-[287px] h-[52px] px-[25px] py-[15px]"
             }
-            placeholder={errors?.pass?.message?errors?.pass?.message:"Create a password"}
+            placeholder={
+              errors?.pass?.message
+                ? errors?.pass?.message
+                : "Create a password"
+            }
           ></Input>
         </div>
         <div className="flex  mt-[25px]">
@@ -142,9 +170,12 @@ const SignupPage = () => {
             </span>
             .
           </span>
-          
         </div>
-        {errors?.agree?.message&&<div className="text-error text-[14px] mt-[5px]">{errors?.agree?.message}</div>}
+        {errors?.agree?.message && (
+          <div className="text-error text-[14px] mt-[5px]">
+            {errors?.agree?.message}
+          </div>
+        )}
         <button
           type="submit"
           className="bg-primary w-[287px] h-[52px] lg:w-[436px] lg:h-[52px] text-white rounded-[10px] leading-[26px] text-[16px] text-[600] mt-[25px]"

@@ -5,8 +5,13 @@ module.exports = {
     extend: {
       fontFamily: {
         primary: ["Epilogue", "sans-serif"],
+        boxShadow: {
+          '3xl': '6px 1px 12px -3px rgba(0,0,0,0.73)',
+        }
       },
       colors: {
+        bgListChat: "#F8FAFF",
+        bgChatSideBar:"#F0F4FA",
         primary: "#1DC071",
         secondary: "#6F49FD",
         text1: "#171725",

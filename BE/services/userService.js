@@ -35,11 +35,18 @@ const createUser = (newUser) => {
 const loginUser = (user) => {
   return new Promise(async (resolve, reject) => {
     const { email, password } = user;
-    console.log("✌️password --->", password);
     try {
       const checkUser = await User.findOne({
         email: email,
       });
+      if(checkUser===null)
+      {
+        resolve({
+          status: "ERR",
+          message: "User or Pass incorrect",
+        });
+      }
+      console.log("✌️checkUser --->", checkUser);
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
       const plainPassword = bcrypt.compareSync(
@@ -106,8 +113,7 @@ const updateUser = (id, name) => {
 const deleteUser = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const deleteUser = await User.findOneAndDelete(id);
-      console.log(deleteUser);
+      await User.findOneAndDelete(id, { new: true });
       resolve({
         status: "OK",
         message: "SUCCESS",

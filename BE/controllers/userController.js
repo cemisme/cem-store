@@ -72,7 +72,7 @@ const updateUser = async (req, res) => {
         message: "The input is required",
       });
     }
-    const respone = await userService.updateUser(id,name);
+    const respone = await userService.updateUser(id, name);
     return res.status(200).json(respone);
   } catch (error) {
     return res.status(404).json({
@@ -80,27 +80,27 @@ const updateUser = async (req, res) => {
     });
   }
 };
-const deleteUser=async(req,res)=>{
- try{
-  const id=res.params.id
-  if(!id)
-  {
-    return res.status(200).json({
-      status:"ERR",
-      message:"ID not true"
-    })
+const deleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "ID not true",
+      });
+    }
+    // const respone = await userService.deleteUser(id);
+    // return res.status(200).json(respone);
+    console.log("token" ,res.header)
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
   }
-  const respone=await userService.deleteUser(id)
-  return res.status(200).json(respone)
- }catch(e){
-  return res.status(404).json({
-    message:e
-  })
- }
-}
+};
 module.exports = {
   createUser,
   loginUser,
   updateUser,
-  deleteUser
+  deleteUser,
 };
