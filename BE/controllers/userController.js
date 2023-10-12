@@ -6,6 +6,7 @@ const createUser = async (req, res) => {
     const { name, email, password } = req.body;
     const isCheckEmail = regex.test(email);
     if (!name || !email || !password) {
+      console.log(name,email,password)
       return res.status(200).json({
         status: "ERR",
         message: "The input is required",
@@ -80,6 +81,7 @@ const updateUser = async (req, res) => {
     });
   }
 };
+<<<<<<< HEAD
 const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
@@ -96,6 +98,18 @@ const deleteUser = async (req, res) => {
     return res.status(404).json({
       message: e,
     });
+=======
+const deleteUser=async(req,res)=>{
+ try{
+  const id=res.params.id
+  
+  if(!id)
+  {
+    return res.status(200).json({
+      status:"ERR",
+      message:"ID not true"
+    })
+>>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
   }
 };
 module.exports = {
