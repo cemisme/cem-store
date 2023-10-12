@@ -24,5 +24,9 @@ router.post("/login",loginUser)
 router.put("/update-user/:id",updateUser)
 router.delete("/delete-user/:id",deleteUser)
 
+<<<<<<< HEAD
+module.exports=router
+>>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
+=======
 module.exports=router
 >>>>>>> 95e473ad5280767326f040c2bcd11060177501a1

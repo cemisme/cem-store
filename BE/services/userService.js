@@ -39,8 +39,12 @@ const loginUser = (user) => {
         email: email,
       });
 <<<<<<< HEAD
+<<<<<<< HEAD
       if(checkUser===null)
       {
+=======
+      if (checkUser === null) {
+>>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
 =======
       if (checkUser === null) {
 >>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
@@ -50,6 +54,7 @@ const loginUser = (user) => {
         });
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log("✌️checkUser --->", checkUser);
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
@@ -57,6 +62,9 @@ const loginUser = (user) => {
         checkUser.password,
         hashedPassword
       );
+=======
+      const plainPassword = await bcrypt.compare(password, checkUser.password);
+>>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
 =======
       const plainPassword = await bcrypt.compare(password, checkUser.password);
 >>>>>>> 95e473ad5280767326f040c2bcd11060177501a1
